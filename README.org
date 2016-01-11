@@ -1,0 +1,64 @@
+#+TITLE: High Resolution Trajectory Compression
+
+* Overview
+	High Resolution Trajectory Compression (HRTC) is a method for
+	efficient storage of trajectories from particle simulators
+	(e.g. molecular dynamics, or agent based systems).
+
+	This code builds a stand-alone program and a library for integration
+	into other programs. Both are fully functional research prototypes.
+
+* Installation
+** Dependencies
+   - integer-encoding-library (included as sub-module)
+   - for the stand-alone program: libboost-program-options (part of [[https://boost.org][boost]])
+   - for the library: our fork of [[https://github.com/biosystemanalysis/tng][trajectory-ng]], residing in the same
+     parent directory as this repository
+
+   The software has only been tested on 64bit GNU/Linux systems using GCC.
+
+** Building
+	 First set up the integer-encoding-library:
+#+BEGIN_SRC sh
+git submodule init
+git submodule update
+(cd integer_encoding_library && make)
+#+END_SRC
+
+	 Then run ~make bin~, ~make lib~, or just ~make~ to build the
+	 stand-alone program (~hrtc~), the library (~hrtc_wrapper.o~), or
+	 both, respectively.
+
+* Usage
+	As uncompressed I/O format ~hrtc~ uses either tab-separated-values
+	(one time-step per line) or an awkward yet-to-document binary
+	format.
+
+	Use
+#+BEGIN_SRC sh
+./hrtc --compress --format tsvfloat --numtraj 42 --bound 23 --error 0.1 \
+    --src original_file --dst compressed_file
+#+END_SRC
+  to compress and
+#+BEGIN_SRC sh
+./hrtc --decompress --format tsvfloat --numtraj 42 --bound 23 --error 0.1 \
+    --src compressed_file --dst uncompressed_file
+#+END_SRC
+	to decompress your data. The number of trajectories (rows per line)
+	has to be specified with ~--numtraj~ as well as the maximal absolute
+	value occurring in the trajectory (e.g. your bounding box) with
+	~--bound~. Most important is the ~--error~ which specifies the
+	maximal distance of a particle between compressed and original
+	representation.
+
+	Further parameters that can be tuned are ~--blocksize~,
+	~--integer-encoding~, and the ~--qp-ratio~. The last is a value
+	between 0 and 1 the specifies how the error budget is split between
+	quantization error and approximation error.
+
+* License
+	The code is released under the GPL version 3 license (see file
+	LICENSE).
+
+* Contact
+	The authors can be contacted via email and jabber at jh@sotun.de.

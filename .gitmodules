@@ -1,0 +1,3 @@
+[submodule "integer_encoding_library"]
+	path = integer_encoding_library
+	url = https://github.com/biosystemanalysis/integer_encoding_library.git
